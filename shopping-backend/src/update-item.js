@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports.hello = async (event) => {
+module.exports.updateItem = async (event) => {
   const dynamodb = new AWS.DynamoDB.DocumentClient();
 
   const { name, imageLink, price } = JSON.parse(event.body);
@@ -10,7 +10,7 @@ module.exports.hello = async (event) => {
   let data;
 
   const query = {
-    TableName: 'ItemsTable',
+    TableName: process.env.DYNAMO_TABLE_NAME,
     Key: {id},
     ExpressionAttributeValues: {
       ":name": name,

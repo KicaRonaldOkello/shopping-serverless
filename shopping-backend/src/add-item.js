@@ -15,7 +15,7 @@ module.exports.addItem = async (event) => {
   }
 
   await dynamodb.put({
-    TableName: 'ItemsTable',
+    TableName: process.env.DYNAMO_TABLE_NAME,
     Item: item
   }).toPromise();
 

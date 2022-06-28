@@ -1,12 +1,12 @@
 "use strict";
 
-module.exports.hello = async (event) => {
+module.exports.getItems = async (event) => {
   const dynamodb = new AWS.DynamoDB.DocumentClient();
   let items;
 
   try {
     const results = await dynamodb.scan({
-      TableName: 'ItemsTable'
+      TableName: process.env.DYNAMO_TABLE_NAME
     }).promise();
     items = results.Items;
   } catch (error) {

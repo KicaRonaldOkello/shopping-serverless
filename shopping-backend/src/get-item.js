@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports.hello = async (event) => {
+module.exports.getItem = async (event) => {
   const dynamodb = new AWS.DynamoDB.DocumentClient();
 
   const { id } = event.pathParameters;
@@ -9,7 +9,7 @@ module.exports.hello = async (event) => {
 
   try {
     const results = await dynamodb.get({
-      TableName: 'ItemsTable',
+      TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {id}
     }).promise();
     items = results.Items;

@@ -4,21 +4,58 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: nodejs14.x
+  environment:
+    DYNAMO_TABLE_NAME: ItemsTable
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMO_TABLE_NAME}"
 
 functions:
-  hello:
-    handler: handler.hello
+  addItem:
+    handler: src/add-item.addItem
     events:
       - httpApi:
           path: /
+          method: post
+  getItem:
+    handler: src/get-item.getItem
+    events:
+      - httpApi:
+          path: /item/{id}
           method: get
+  getItems:
+    handler: src/get-items.getItems
+    events:
+      - httpApi:
+        path: /
+        method: get
+  updateItem:
+    handler: src/update-item.updateItem
+    events:
+      - httpApi:
+          path: /item/{id}
+          method: put
+  deleteItem:
+    handler: src/delete-item.deleteItem
+    events:
+      - httpApi:
+        path: /item/{id}
+        method: delete
 
 resources:
   Resources:
     ItemsTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ItemsTable
+        TableName: ${self:provider.environment.DYNAMO_TABLE_NAME}
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
           - AttributeName: id
