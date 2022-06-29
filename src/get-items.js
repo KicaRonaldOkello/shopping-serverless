@@ -1,5 +1,5 @@
 "use strict";
-
+const AWS = require('aws-sdk');
 module.exports.getItems = async (event) => {
   const dynamodb = new AWS.DynamoDB.DocumentClient();
   let items;
@@ -15,6 +15,6 @@ module.exports.getItems = async (event) => {
 
   return {
     statusCode: 200,
-    body: JSON.stringify(items),
+    body: JSON.stringify({...items}),
   };
 };

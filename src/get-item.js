@@ -1,5 +1,5 @@
 "use strict";
-
+const AWS = require('aws-sdk');
 module.exports.getItem = async (event) => {
   const dynamodb = new AWS.DynamoDB.DocumentClient();
 
@@ -12,7 +12,7 @@ module.exports.getItem = async (event) => {
       TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {id}
     }).promise();
-    items = results.Items;
+    items = results.Item;
   } catch (error) {
     console.log(error);
   }

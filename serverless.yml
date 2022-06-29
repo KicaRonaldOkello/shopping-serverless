@@ -16,7 +16,8 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource:
-        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMO_TABLE_NAME}"
+        - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/ItemsTable
+
 
 functions:
   addItem:
@@ -35,20 +36,20 @@ functions:
     handler: src/get-items.getItems
     events:
       - httpApi:
-        path: /
-        method: get
+          path: /
+          method: get
   updateItem:
     handler: src/update-item.updateItem
     events:
       - httpApi:
           path: /item/{id}
-          method: put
+          method: patch
   deleteItem:
     handler: src/delete-item.deleteItem
     events:
       - httpApi:
-        path: /item/{id}
-        method: delete
+          path: /item/{id}
+          method: delete
 
 resources:
   Resources:

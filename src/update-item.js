@@ -1,11 +1,11 @@
 "use strict";
-
+const AWS = require('aws-sdk');
 module.exports.updateItem = async (event) => {
   const dynamodb = new AWS.DynamoDB.DocumentClient();
 
-  const { name, imageLink, price } = JSON.parse(event.body);
-
   const { id } = event.pathParameters;
+
+  const { name, imageLink, price } = event.body;
 
   let data;
 
@@ -22,7 +22,7 @@ module.exports.updateItem = async (event) => {
   }
 
   try {
-    data = await dynamodb.put(query).toPromise();
+    data = await dynamodb.put(query).promise();
     if (data.Attributes) {
       return {
         statusCode: 200,
