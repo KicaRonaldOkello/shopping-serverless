@@ -6,6 +6,10 @@ provider:
   runtime: nodejs14.x
   environment:
     DYNAMO_TABLE_NAME: ItemsTable
+    USER_POOL_ID:
+      Ref: CognitoUserPool
+    COGNITO_CLIENT_ID:
+      Ref: CognitoUserPoolClient
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -15,8 +19,14 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
+        - cognito-idp:AdminInitiateAuth
+        - cognito-idp:AdminCreateUser
+        - cognito-idp:AdminSetUserPassword
+        - cognito-idp:signUp
+        - cognito-idp:adminConfirmSignUp
       Resource:
         - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/ItemsTable
+        - arn:aws:cognito-idp:${aws:region}:${aws:accountId}:userpool/us-east-1_u7LPzUGLq
 
 
 functions:
@@ -50,6 +60,18 @@ functions:
       - httpApi:
           path: /item/{id}
           method: delete
+  signup:
+    handler: src/signup.signup
+    events:
+      - httpApi:
+          path: /signup
+          method: post
+  login:
+    handler: src/login.login
+    events:
+      - httpApi:
+          path: /login
+          method: post
 
 resources:
   Resources:
@@ -64,3 +86,26 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ShoppingBackendUserPool
+        Schema:
+          - Name: email
+            Required: true
+            Mutable: true
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+        AutoVerifiedAttributes: ["email"]
+    CognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: ShoppingBackendUserPoolClient
+        UserPoolId:
+          Ref: CognitoUserPool
+        AccessTokenValidity: 5
+        IdTokenValidity: 5
+        ExplicitAuthFlows:
+          - ADMIN_NO_SRP_AUTH
+        GenerateSecret: false
