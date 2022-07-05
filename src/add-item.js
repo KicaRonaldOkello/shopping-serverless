@@ -4,7 +4,7 @@ const AWS = require('aws-sdk');
 
 module.exports.addItem = async (event) => {
   const dynamodb = new AWS.DynamoDB.DocumentClient();
-  const { name, imageLink, price } = event.body;
+  const { name, imageLink, price } = JSON.parse(event.body);
   const createdAt = new Date().toISOString;
   const id = v4();
 
@@ -23,6 +23,6 @@ module.exports.addItem = async (event) => {
 
   return {
     statusCode: 201,
-    body: JSON.stringify({...item})
+    body: JSON.stringify(item)
   }
 };

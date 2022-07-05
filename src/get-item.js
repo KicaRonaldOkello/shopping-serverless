@@ -5,20 +5,20 @@ module.exports.getItem = async (event) => {
 
   const { id } = event.pathParameters;
 
-  let items;
+  let item;
 
   try {
     const results = await dynamodb.get({
       TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {id}
     }).promise();
-    items = results.Item;
+    item = results.Item;
   } catch (error) {
     console.log(error);
   }
 
   return {
     statusCode: 200,
-    body: JSON.stringify(items),
+    body: JSON.stringify(item),
   };
 };

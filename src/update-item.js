@@ -5,7 +5,7 @@ module.exports.updateItem = async (event) => {
 
   const { id } = event.pathParameters;
 
-  const { name, imageLink, price } = event.body;
+  const { name, imageLink, price } = JSON.parse(event.body);
 
   let data;
 
@@ -17,12 +17,15 @@ module.exports.updateItem = async (event) => {
       ":imageLink": imageLink,
       ":price": price
     },
-    UpdateExpression: "SET name = :name, imageLink = :imageLink, price = :price",
+    ExpressionAttributeNames: {
+      "#itemName": "name"
+    },
+    UpdateExpression: "SET #itemName = :name, imageLink = :imageLink, price = :price",
     ReturnValues: "ALL_NEW"
   }
 
   try {
-    data = await dynamodb.put(query).promise();
+    data = await dynamodb.update(query).promise();
     if (data.Attributes) {
       return {
         statusCode: 200,
@@ -35,6 +38,7 @@ module.exports.updateItem = async (event) => {
       };
     }
   } catch(e) {
+
     return { statusCode:500, body: "Could not update this post" };
   }
 };

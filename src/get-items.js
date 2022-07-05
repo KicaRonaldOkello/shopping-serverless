@@ -15,6 +15,6 @@ module.exports.getItems = async (event) => {
 
   return {
     statusCode: 200,
-    body: JSON.stringify({...items}),
+    body: JSON.stringify(items),
   };
 };
