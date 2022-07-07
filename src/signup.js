@@ -5,7 +5,7 @@ module.exports.signup = async (event) => {
 
   const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
 
-  const { email, password } = event.body;
+  const { email, password } = JSON.parse(event.body);
     const signUpParams = {
         ClientId: process.env.COGNITO_CLIENT_ID,
         Username: email,

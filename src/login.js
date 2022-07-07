@@ -6,7 +6,7 @@ module.exports.login = async (event) => {
 
   const cognitoidentityserviceprovider = new AWS.CognitoIdentityServiceProvider();
 
-  const { email, password } = event.body;
+  const { email, password } = JSON.parse(event.body);
 
     const params = {
         ClientId: process.env.COGNITO_CLIENT_ID,
@@ -18,9 +18,8 @@ module.exports.login = async (event) => {
         }
       }
       const { AuthenticationResult: { IdToken: idToken } } = await cognitoidentityserviceprovider.adminInitiateAuth(params).promise()
-      return { 
-        idToken,
-        message: 'Authentication successful',
+      return {
+        body: JSON.stringify({ idToken, message: 'Authentication successful'}),
         statusCode: 200
       };
 };
